@@ -26,6 +26,4 @@ lerna-debug.log*
 #Local data
 /local-resourses
 /postgres-data
-
-#Prisma
-/generated/prisma
+.drizzle/

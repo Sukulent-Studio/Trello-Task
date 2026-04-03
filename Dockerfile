@@ -3,11 +3,7 @@ FROM node:alpine3.23
 WORKDIR /app
 
 COPY package*.json ./
-COPY prisma ./prisma/
-
-RUN npm ci
-
-RUN npx prisma generate
+RUN npm ci --verbose
 
 COPY . .
 
