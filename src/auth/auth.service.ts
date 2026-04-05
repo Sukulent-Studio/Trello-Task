@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PublicUser } from 'src/db/schema';
 import { UsersService } from 'src/users/users.service';
+import { AuthResponseDto } from './dto/auth.response.dto';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { IJwtPayload } from './interfaces/jwt.payload.interface';
@@ -20,7 +21,7 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
-  async register(dto: RegisterDto) {
+  async register(dto: RegisterDto): Promise<AuthResponseDto> {
     const existing = await this.usersService.findByEmail(dto.email);
     if (existing) {
       throw new ConflictException('Email already exists');
@@ -28,7 +29,7 @@ export class AuthService {
 
     const hashedPwd = await bcrypt.hash(
       dto.password,
-      this.configService.getOrThrow('BCRYPT_SALT_ROUNDS'),
+      Number(this.configService.getOrThrow<number>('BCRYPT_SALT_ROUNDS')),
     );
 
     const user = await this.usersService.create({
@@ -40,7 +41,7 @@ export class AuthService {
     return { access_token, token_type: 'bearer' };
   }
 
-  async login(dto: LoginDto) {
+  async login(dto: LoginDto): Promise<AuthResponseDto> {
     const user = await this.usersService.findByEmailPwd(dto.email);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
