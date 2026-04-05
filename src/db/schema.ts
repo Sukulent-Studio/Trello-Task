@@ -8,6 +8,8 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 
+// ==== TABLES ====
+
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
   email: varchar('email', { length: 255 }).unique().notNull(),
@@ -91,5 +93,19 @@ export const commentRelations = relations(comments, ({ one }) => ({
   }),
 }));
 
+// ==== TYPES ====
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+export type PublicUser = Omit<User, 'password'>;
+
+// ==== FIELDS ====
+
+export const usersPublicFields = {
+  id: users.id,
+  email: users.email,
+  first_name: users.first_name,
+  second_name: users.second_name,
+  created_at: users.created_at,
+  updated_at: users.updated_at,
+} as const;

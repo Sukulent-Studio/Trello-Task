@@ -6,7 +6,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { User } from 'src/db/schema';
+import { PublicUser } from 'src/db/schema';
 import { UsersService } from 'src/users/users.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
@@ -41,7 +41,7 @@ export class AuthService {
   }
 
   async login(dto: LoginDto) {
-    const user = await this.usersService.findByEmail(dto.email);
+    const user = await this.usersService.findByEmailPwd(dto.email);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -54,14 +54,7 @@ export class AuthService {
     return { access_token, token_type: 'bearer' };
   }
 
-  async getMe(userId: number) {
-    const user = await this.usersService.findByIdOrThrow(userId);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...result } = user;
-    return result;
-  }
-
-  private generateToken(user: User) {
+  private generateToken(user: PublicUser) {
     const payload: IJwtPayload = { sub: user.id, email: user.email };
     return this.jwtService.sign(payload, {
       expiresIn: this.configService.getOrThrow<number>('JWT_EXPIRES_IN'),
