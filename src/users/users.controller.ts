@@ -21,6 +21,8 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import type { IJwtPayload } from 'src/auth/interfaces/jwt.payload.interface';
 import { ColumnsService } from 'src/columns/columns.service';
 import { CreateColumnDto } from 'src/columns/dto/column.create.dto';
+import { ColumnResponseDto } from 'src/columns/dto/column.response.dto';
+import { ColumnsListResponseDto } from 'src/columns/dto/columns.list.response.dto';
 import { UpdateColumnDto } from 'src/columns/dto/columnt.update.dto';
 import { CurrentUser } from 'src/common/decorators/current.user.decorator';
 import { UpdateUserDto } from './dto/update.user.dto';
@@ -216,12 +218,42 @@ export class UsersController {
     return { message: 'Account deleted successfully' };
   }
 
-  @Get('/columns')
+  @Get('/columns/all')
+  @ApiOperation({ summary: 'Получить все колонки текущего пользователя' })
+  @ApiResponse({
+    status: 200,
+    description: 'Список колонок пользователя',
+    type: ColumnsListResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Токен не предоставлен или невалиден',
+  })
   async getColumns(@CurrentUser() user: IJwtPayload) {
     return await this.columnService.getAllColumnsByUserIdOrThrow(user.sub);
   }
 
   @Get('/columns/:id')
+  @ApiOperation({ summary: 'Получить колонку по ID' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID колонки',
+    example: 1,
+    type: Number,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Данные колонки',
+    type: ColumnResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Токен не предоставлен или невалиден',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Колонка не найдена',
+  })
   async getColumnById(
     @CurrentUser() user: IJwtPayload,
     @Param('id', ParseIntPipe) id: number,
@@ -230,6 +262,32 @@ export class UsersController {
   }
 
   @Post('/columns')
+  @ApiOperation({ summary: 'Создать новую колонку' })
+  @ApiBody({
+    type: CreateColumnDto,
+    description: 'Данные для создания колонки',
+    examples: {
+      create: {
+        summary: 'Создать колонку',
+        value: {
+          title: 'В работе',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Колонка успешно создана',
+    type: ColumnResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Ошибка валидации данных',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Токен не предоставлен или невалиден',
+  })
   async createColumn(
     @CurrentUser() user: IJwtPayload,
     @Body() dto: CreateColumnDto,
@@ -238,6 +296,42 @@ export class UsersController {
   }
 
   @Patch('/columns/:id')
+  @ApiOperation({ summary: 'Обновить колонку' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID колонки',
+    example: 1,
+    type: Number,
+  })
+  @ApiBody({
+    type: UpdateColumnDto,
+    description: 'Поля для обновления колонки',
+    examples: {
+      updateTitle: {
+        summary: 'Обновить название колонки',
+        value: {
+          title: 'Готово',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Колонка успешно обновлена',
+    type: ColumnResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Ошибка валидации данных',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Токен не предоставлен или невалиден',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Колонка не найдена',
+  })
   async changeColumn(
     @CurrentUser() user: IJwtPayload,
     @Param('id', ParseIntPipe) id: number,
@@ -247,6 +341,32 @@ export class UsersController {
   }
 
   @Patch('columns/:columnId/:position')
+  @ApiOperation({ summary: 'Изменить позицию колонки' })
+  @ApiParam({
+    name: 'columnId',
+    description: 'ID колонки',
+    example: 1,
+    type: Number,
+  })
+  @ApiParam({
+    name: 'position',
+    description: 'Новая позиция',
+    example: 2,
+    type: Number,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Позиция успешно изменена',
+    type: ColumnsListResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Токен не предоставлен или невалиден',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Колонка не найдена',
+  })
   async changePosition(
     @CurrentUser() user: IJwtPayload,
     @Param('columnId', ParseIntPipe) columnId: number,
@@ -260,6 +380,25 @@ export class UsersController {
   }
 
   @Delete('/columns/:id')
+  @ApiOperation({ summary: 'Удалить колонку' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID колонки',
+    example: 1,
+    type: Number,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Колонка успешно удалена',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Токен не предоставлен или невалиден',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Колонка не найдена',
+  })
   async deleteColumn(
     @CurrentUser() user: IJwtPayload,
     @Param('id', ParseIntPipe) id: number,
