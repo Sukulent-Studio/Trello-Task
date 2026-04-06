@@ -99,6 +99,9 @@ export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type PublicUser = Omit<User, 'password'>;
 
+export type Column = typeof columns.$inferSelect;
+export type NewColumn = typeof columns.$inferInsert;
+
 // ==== FIELDS ====
 
 export const usersPublicFields = {

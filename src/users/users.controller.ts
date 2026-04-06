@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Patch,
+  Post,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -18,6 +19,9 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import type { IJwtPayload } from 'src/auth/interfaces/jwt.payload.interface';
+import { ColumnsService } from 'src/columns/columns.service';
+import { CreateColumnDto } from 'src/columns/dto/column.create.dto';
+import { UpdateColumnDto } from 'src/columns/dto/columnt.update.dto';
 import { CurrentUser } from 'src/common/decorators/current.user.decorator';
 import { UpdateUserDto } from './dto/update.user.dto';
 import { UserResponseDto } from './dto/user.response.dto';
@@ -28,7 +32,10 @@ import { UsersService } from './users.service';
 @UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly columnService: ColumnsService,
+  ) {}
 
   @Get('me')
   @ApiOperation({ summary: 'Получить свой профиль' })
@@ -172,6 +179,7 @@ export class UsersController {
   }
 
   @Delete('me')
+  @ApiOperation({ summary: 'Удалить свой профиль' })
   @ApiResponse({
     status: 200,
     description: 'Аккаунт успешно удалён',
@@ -206,5 +214,56 @@ export class UsersController {
   async removeMe(@CurrentUser() user: IJwtPayload) {
     await this.usersService.remove(user.sub);
     return { message: 'Account deleted successfully' };
+  }
+
+  @Get('/columns')
+  async getColumns(@CurrentUser() user: IJwtPayload) {
+    return await this.columnService.getAllColumnsByUserIdOrThrow(user.sub);
+  }
+
+  @Get('/columns/:id')
+  async getColumnById(
+    @CurrentUser() user: IJwtPayload,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return await this.columnService.getUserColumnByIdOrThrow(user.sub, id);
+  }
+
+  @Post('/columns')
+  async createColumn(
+    @CurrentUser() user: IJwtPayload,
+    @Body() dto: CreateColumnDto,
+  ) {
+    return await this.columnService.createColumn(dto, user.sub);
+  }
+
+  @Patch('/columns/:id')
+  async changeColumn(
+    @CurrentUser() user: IJwtPayload,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateColumnDto,
+  ) {
+    return await this.columnService.changeColumn(dto, user.sub, id);
+  }
+
+  @Patch('columns/:columnId/:position')
+  async changePosition(
+    @CurrentUser() user: IJwtPayload,
+    @Param('columnId', ParseIntPipe) columnId: number,
+    @Param('position', ParseIntPipe) position: number,
+  ) {
+    return await this.columnService.changePosition(
+      user.sub,
+      columnId,
+      position,
+    );
+  }
+
+  @Delete('/columns/:id')
+  async deleteColumn(
+    @CurrentUser() user: IJwtPayload,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return await this.columnService.deleteColumn(user.sub, id);
   }
 }
