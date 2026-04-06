@@ -25,8 +25,8 @@ import { ColumnResponseDto } from 'src/columns/dto/column.response.dto';
 import { ColumnsListResponseDto } from 'src/columns/dto/columns.list.response.dto';
 import { UpdateColumnDto } from 'src/columns/dto/columnt.update.dto';
 import { CurrentUser } from 'src/common/decorators/current.user.decorator';
-import { UpdateUserDto } from './dto/update.user.dto';
 import { UserResponseDto } from './dto/user.response.dto';
+import { UpdateUserDto } from './dto/user.update.dto';
 import { UsersService } from './users.service';
 
 @ApiTags('Users')

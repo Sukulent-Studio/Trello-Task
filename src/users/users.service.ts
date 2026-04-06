@@ -12,8 +12,8 @@ import {
   users,
   usersPublicFields,
 } from 'src/db/schema';
-import { CreateUserDto } from './dto/create.user.dto';
-import { UpdateUserDto } from './dto/update.user.dto';
+import { CreateUserDto } from './dto/user.create.dto';
+import { UpdateUserDto } from './dto/user.update.dto';
 
 @Injectable()
 export class UsersService {
