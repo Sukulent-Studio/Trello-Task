@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
-import { CardsService } from './cards.service';
+import { DbModule } from 'src/db/db.module';
 import { CardsController } from './cards.controller';
+import { CardsService } from './cards.service';
 
 @Module({
+  imports: [DbModule],
   controllers: [CardsController],
   providers: [CardsService],
+  exports: [CardsService],
 })
 export class CardsModule {}

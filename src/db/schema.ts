@@ -104,6 +104,9 @@ export type PublicUser = Omit<User, 'password'>;
 export type Column = typeof columns.$inferSelect;
 export type NewColumn = typeof columns.$inferInsert;
 
+export type Card = typeof cards.$inferSelect;
+export type NewCard = typeof cards.$inferInsert;
+
 // ==== FIELDS ====
 
 export const usersPublicFields = {
