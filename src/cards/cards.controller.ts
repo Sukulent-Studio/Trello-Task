@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Patch,
+  Post,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -18,6 +19,9 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import type { IJwtPayload } from 'src/auth/interfaces/jwt.payload.interface';
+import { CommentsService } from 'src/comments/comments.service';
+import { CreateCommentDto } from 'src/comments/dto/comment.create.dto';
+import { CommentResponseDto } from 'src/comments/dto/comment.response.dto';
 import { CurrentUser } from 'src/common/decorators/current.user.decorator';
 import { CardsService } from './cards.service';
 import { CardResponseDto } from './dto/card.response.dto';
@@ -29,7 +33,10 @@ import { CardsListResponseDto } from './dto/cards.list.response.dto';
 @UseGuards(JwtAuthGuard)
 @Controller('cards')
 export class CardsController {
-  constructor(private readonly cardsService: CardsService) {}
+  constructor(
+    private readonly cardsService: CardsService,
+    private readonly commentsService: CommentsService,
+  ) {}
 
   @Get(':id')
   @ApiOperation({ summary: 'Получить карточку по ID' })
@@ -87,5 +94,31 @@ export class CardsController {
     @CurrentUser() user: IJwtPayload,
   ) {
     return this.cardsService.remove(user.sub, id);
+  }
+
+  @Post(':cardId/comments')
+  @ApiOperation({ summary: 'Добавить комментарий к карточке' })
+  @ApiParam({ name: 'cardId', type: Number, description: 'ID карточки' })
+  @ApiBody({ type: CreateCommentDto })
+  @ApiResponse({ status: 201, type: CommentResponseDto })
+  @ApiResponse({ status: 404, description: 'Карточка не найдена' })
+  async create(
+    @Param('cardId', ParseIntPipe) cardId: number,
+    @Body() dto: CreateCommentDto,
+    @CurrentUser() user: IJwtPayload,
+  ) {
+    return this.commentsService.create(user.sub, cardId, dto);
+  }
+
+  @Get(':cardId/comments/all')
+  @ApiOperation({ summary: 'Получить все комментарии карточки' })
+  @ApiParam({ name: 'cardId', type: Number })
+  @ApiResponse({ status: 200, type: [CommentResponseDto] })
+  @ApiResponse({ status: 404, description: 'Карточка не найдена' })
+  async findAll(
+    @Param('cardId', ParseIntPipe) cardId: number,
+    @CurrentUser() user: IJwtPayload,
+  ) {
+    return this.commentsService.findAllByCardId(user.sub, cardId);
   }
 }

@@ -107,6 +107,9 @@ export type NewColumn = typeof columns.$inferInsert;
 export type Card = typeof cards.$inferSelect;
 export type NewCard = typeof cards.$inferInsert;
 
+export type Comment = typeof comments.$inferSelect;
+export type NewComment = typeof comments.$inferInsert;
+
 // ==== FIELDS ====
 
 export const usersPublicFields = {
