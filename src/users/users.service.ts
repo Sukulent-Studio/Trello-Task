@@ -12,8 +12,8 @@ import {
   users,
   usersPublicFields,
 } from 'src/db/schema';
-import { CreateUserDto } from './dto/create.user.dto';
-import { UpdateUserDto } from './dto/update.user.dto';
+import { CreateUserDto } from './dto/user.create.dto';
+import { UpdateUserDto } from './dto/user.update.dto';
 
 @Injectable()
 export class UsersService {
@@ -106,8 +106,8 @@ export class UsersService {
     await this.findByIdOrThrow(id);
 
     const updateData: Partial<NewUser> = {
-      ...(dto.first_name && { first_name: dto.first_name }),
-      ...(dto.second_name && { second_name: dto.second_name }),
+      ...(dto.first_name ? { first_name: dto.first_name } : {}),
+      ...(dto.second_name ? { second_name: dto.second_name } : {}),
     };
 
     const result = await this.connection.db

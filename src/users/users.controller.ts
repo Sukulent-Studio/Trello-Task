@@ -19,8 +19,8 @@ import {
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import type { IJwtPayload } from 'src/auth/interfaces/jwt.payload.interface';
 import { CurrentUser } from 'src/common/decorators/current.user.decorator';
-import { UpdateUserDto } from './dto/update.user.dto';
 import { UserResponseDto } from './dto/user.response.dto';
+import { UpdateUserDto } from './dto/user.update.dto';
 import { UsersService } from './users.service';
 
 @ApiTags('Users')
@@ -172,6 +172,7 @@ export class UsersController {
   }
 
   @Delete('me')
+  @ApiOperation({ summary: 'Удалить свой профиль' })
   @ApiResponse({
     status: 200,
     description: 'Аккаунт успешно удалён',

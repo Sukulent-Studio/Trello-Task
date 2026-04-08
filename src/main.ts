@@ -9,7 +9,12 @@ async function bootstrap() {
   app.use(morgan('dev'));
 
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
-  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+    }),
+  );
 
   const config = new DocumentBuilder()
     .setTitle('Trello API')
@@ -20,7 +25,7 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, documentFactory);
 
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api', { exclude: [''] });
   await app.listen(process.env.PORT ?? 3000);
 }
 

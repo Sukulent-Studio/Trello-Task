@@ -16,10 +16,11 @@ export const users = pgTable('users', {
   password: varchar('password', { length: 255 }).notNull(),
   first_name: varchar('first_name', { length: 100 }).notNull(),
   second_name: varchar('second_name', { length: 100 }).notNull(),
-  created_at: timestamp('created_at').defaultNow(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at', { mode: 'date' })
     .defaultNow()
-    .$onUpdate(() => new Date()),
+    .$onUpdate(() => new Date())
+    .notNull(),
 });
 
 export const columns = pgTable('columns', {
@@ -29,7 +30,7 @@ export const columns = pgTable('columns', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   position: integer('position').notNull(),
-  created_at: timestamp('created_at').defaultNow(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
 });
 
 export const cards = pgTable('cards', {
@@ -40,10 +41,11 @@ export const cards = pgTable('cards', {
     .notNull()
     .references(() => columns.id, { onDelete: 'cascade' }),
   position: integer('position').notNull(),
-  created_at: timestamp('created_at').defaultNow(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at', { mode: 'date' })
     .defaultNow()
-    .$onUpdate(() => new Date()),
+    .$onUpdate(() => new Date())
+    .notNull(),
 });
 
 export const comments = pgTable('comments', {
@@ -55,7 +57,7 @@ export const comments = pgTable('comments', {
   author_id: integer('author_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  created_at: timestamp('created_at').defaultNow(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
 });
 
 // ==== RELATIONS ====
@@ -98,6 +100,15 @@ export const commentRelations = relations(comments, ({ one }) => ({
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type PublicUser = Omit<User, 'password'>;
+
+export type Column = typeof columns.$inferSelect;
+export type NewColumn = typeof columns.$inferInsert;
+
+export type Card = typeof cards.$inferSelect;
+export type NewCard = typeof cards.$inferInsert;
+
+export type Comment = typeof comments.$inferSelect;
+export type NewComment = typeof comments.$inferInsert;
 
 // ==== FIELDS ====
 
