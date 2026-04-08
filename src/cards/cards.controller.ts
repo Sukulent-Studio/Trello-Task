@@ -22,13 +22,14 @@ import type { IJwtPayload } from 'src/auth/interfaces/jwt.payload.interface';
 import { CommentsService } from 'src/comments/comments.service';
 import { CreateCommentDto } from 'src/comments/dto/comment.create.dto';
 import { CommentResponseDto } from 'src/comments/dto/comment.response.dto';
+import { CommentsListResponseDto } from 'src/comments/dto/comments.list.response.dto';
 import { CurrentUser } from 'src/common/decorators/current.user.decorator';
 import { CardsService } from './cards.service';
 import { CardResponseDto } from './dto/card.response.dto';
 import { UpdateCardDto } from './dto/card.update.dto';
 import { CardsListResponseDto } from './dto/cards.list.response.dto';
 
-@ApiTags('cards')
+@ApiTags('Cards')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('cards')
@@ -113,7 +114,7 @@ export class CardsController {
   @Get(':cardId/comments/all')
   @ApiOperation({ summary: 'Получить все комментарии карточки' })
   @ApiParam({ name: 'cardId', type: Number })
-  @ApiResponse({ status: 200, type: [CommentResponseDto] })
+  @ApiResponse({ status: 200, type: CommentsListResponseDto })
   @ApiResponse({ status: 404, description: 'Карточка не найдена' })
   async findAll(
     @Param('cardId', ParseIntPipe) cardId: number,

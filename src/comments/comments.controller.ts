@@ -23,7 +23,7 @@ import { CommentsService } from './comments.service';
 import { CommentResponseDto } from './dto/comment.response.dto';
 import { UpdateCommentDto } from './dto/comment.update.dto';
 
-@ApiTags('comments')
+@ApiTags('Comments')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('comments')

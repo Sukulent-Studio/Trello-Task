@@ -22,6 +22,7 @@ import type { IJwtPayload } from 'src/auth/interfaces/jwt.payload.interface';
 import { CardsService } from 'src/cards/cards.service';
 import { CreateCardDto } from 'src/cards/dto/card.create.dto';
 import { CardResponseDto } from 'src/cards/dto/card.response.dto';
+import { CardsListResponseDto } from 'src/cards/dto/cards.list.response.dto';
 import { CurrentUser } from 'src/common/decorators/current.user.decorator';
 import { ColumnsService } from './columns.service';
 import { CreateColumnDto } from './dto/column.create.dto';
@@ -29,7 +30,7 @@ import { ColumnResponseDto } from './dto/column.response.dto';
 import { ColumnsListResponseDto } from './dto/columns.list.response.dto';
 import { UpdateColumnDto } from './dto/columnt.update.dto';
 
-@ApiTags('columns')
+@ApiTags('Columns')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('columns')
@@ -242,7 +243,7 @@ export class ColumnsController {
   @Get(':columnId/cards/all')
   @ApiOperation({ summary: 'Получить все карточки колонки' })
   @ApiParam({ name: 'columnId', type: Number })
-  @ApiResponse({ status: 200, type: [CardResponseDto] })
+  @ApiResponse({ status: 200, type: CardsListResponseDto })
   async findAll(
     @CurrentUser() user: IJwtPayload,
     @Param('columnId', ParseIntPipe) columnId: number,

@@ -19,13 +19,13 @@ export class CardsService {
     user_id: number,
     column_id: number,
   ): Promise<void> {
-    const result = await this.connection.db
+    const [result] = await this.connection.db
       .select()
       .from(columns)
       .where(and(eq(columns.user_id, user_id), eq(columns.id, column_id)));
 
     if (!result) {
-      throw new NotFoundException('Карточка не найдена');
+      throw new NotFoundException('Колонка не найдена');
     }
   }
 
