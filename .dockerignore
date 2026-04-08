@@ -1,0 +1,33 @@
+# Git
+.git
+.gitignore
+
+# Документация
+doc/
+README.md
+LICENSE
+*.md
+
+# Переменные окружения
+.env
+.env.local
+.env.*.local
+
+postgres-data/
+
+# Логи
+*.log
+logs/
+
+# Локальные файлы
+local-resourses/
+
+# Папки сборщиков и зависимостей
+node_modules/
+venv/
+.env/
+node_modules/
+npm-debug.log
+yarn-error.log
+dist/
+build/
